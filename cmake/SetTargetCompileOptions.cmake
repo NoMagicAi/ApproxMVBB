@@ -1,21 +1,19 @@
 macro(setTargetCompileOptions TARGETNAME)
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")        
-        list(APPEND CXX_WARNINGS "-Wall" 
-                                "-Wpedantic" 
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        list(APPEND CXX_WARNINGS "-Wall"
+                                "-Wpedantic"
                                 "-Wno-comment" )
 
-        list(APPEND CXX_FLAGS_DEBUG  "-fsanitize=address" 
-                                     "-fno-omit-frame-pointer")
 
     elseif( CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
-        list(APPEND CXX_WARNINGS    "-Wall" 
-                                    "-Wpedantic" 
+        list(APPEND CXX_WARNINGS    "-Wall"
+                                    "-Wpedantic"
                                     "-Wno-comment")
 
         list(APPEND CXX_FLAGS_DEBUG "-fno-omit-frame-pointer")
-        
+
         if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             list(APPEND CXX_FLAGS_DEBUG "-fsanitize=leak"
                                         "-fsanitize=address"
@@ -36,14 +34,10 @@ macro(setTargetCompileOptions TARGETNAME)
 
     set_target_properties(${TARGETNAME} PROPERTIES CXX_STANDARD 14)
     target_compile_features(${TARGETNAME} PUBLIC cxx_std_14)
-    
+
     target_compile_options(${TARGETNAME} PRIVATE ${CXX_FLAGS} ${CXX_WARNINGS} )
     target_compile_options(${TARGETNAME} PRIVATE $<$<CONFIG:Debug>:${CXX_FLAGS_DEBUG}> )
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR 
-       CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        # with clang 5.0.1: -fsanitize=address produces weird output in lldb for std::string ...
-        set_property(TARGET ${TARGETNAME} PROPERTY LINK_FLAGS "-fsanitize=leak -fsanitize=address")
-    endif()
 
 endmacro()
+
